@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+:root {
+  font-family: 'Plus Jakarta Sans', 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #f6f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --text: #0f172a;
+  --muted: #5b6477;
+  --surface: #ffffff;
+  --border: #e6e9f0;
+  --border-strong: #cfd6e6;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f6f7fb;
+  color: var(--text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  font-weight: 600;
+  color: #2344e8;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #1c8cfe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Manrope', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  min-height: 44px;
+  background: #2344e8;
+  color: white;
+  box-shadow: 0 10px 24px rgba(35, 68, 232, 0.25);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(35, 68, 232, 0.25);
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(35, 68, 232, 0.4);
+  outline-offset: 3px;
+}
+
+input,
+select,
+textarea {
+  min-height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #ffffff;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #2344e8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(35, 68, 232, 0.12);
+}
+
+table {
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
+  color: #111827;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
