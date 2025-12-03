@@ -110,8 +110,7 @@ export default function PantryManagement() {
                                     <th>Item</th>
                                     <th>Category</th>
                                     <th>Quantity</th>
-                                    <th>Purchase Date</th>
-                                    <th>Expiry Date</th>
+                                    <th>Use By</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -127,11 +126,13 @@ export default function PantryManagement() {
                                             <td>{categoryName}</td>
                                             <td>{item.itemQuantity} {item.units}</td>
                                             <td>
-                                                <p className="table-meta">{formatItemDate(item.purchaseDate)}</p>
-                                            </td>
-                                            <td>
                                                 <p className="table-meta">{formatItemDate(item.expiryDate)}</p>
-                                                <p className="table-meta">{daysUntilExpiry(item.expiryDate)} days left</p>
+                                                <p className="table-meta">
+                                                    {(() => {
+                                                        const daysLeft = daysUntilExpiry(item.expiryDate);
+                                                        return daysLeft === null ? "No expiry set" : `${daysLeft} days left`;
+                                                    })()}
+                                                </p>
                                             </td>
                                             <td>
                                                 <span className={`chip ${statusClass}`}>{formatItemState(item.state)}</span>

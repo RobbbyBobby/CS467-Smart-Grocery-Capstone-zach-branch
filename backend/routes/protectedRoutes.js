@@ -8,6 +8,20 @@ const pool = require('../db');
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+function deriveState(item) {
+    const currentState = item.state || "fresh";
+    if (!item.expiryDate) return currentState;
+
+    const expiry = new Date(item.expiryDate);
+    if (isNaN(expiry.getTime())) return currentState;
+
+    const diffDays = Math.ceil((expiry - new Date()) / MS_PER_DAY);
+    if (diffDays < 0) return "expired";
+    if (diffDays <= 5) return "nearing_expiration";
+    return "fresh";
+}
+
 // This route is used to verify the user on page refresh
 router.get('/me', authenticateToken, async (req, res) => {
     const jwtUser = req.user;
@@ -35,33 +49,32 @@ router.get('/items/:userId', authenticateToken, async (req, res) => {
         [userId]
     );
 
-    res.json(items);
+    const withDerivedState = items.map(item => ({
+        ...item,
+        state: deriveState(item),
+    }));
+
+    res.json(withDerivedState);
 });
 
-// GET all items by state for userId
+// GET all items by state for userId (derived from expiry date)
 router.get('/item-state/:userId/:state', authenticateToken, async (req, res) => {
     const userId = req.params.userId;
-    const state = req.params.state;
+    const targetState = req.params.state;
 
     const [items] = await pool.execute(
-        "SELECT * FROM items WHERE userId = ? AND state = ? AND itemQuantity > 0",
-        [userId, state]
+        "SELECT * FROM items WHERE userId = ? AND itemQuantity > 0",
+        [userId]
     );
 
-    res.json(items);
-});
+    const filtered = items
+        .map(item => {
+            const derived = deriveState(item);
+            return { ...item, state: derived };
+        })
+        .filter(item => item.state === targetState);
 
-// GET all items by state for userId (duplicate route kept as in original)
-router.get('/item-state/:userId/:state', authenticateToken, async (req, res) => {
-    const userId = req.params.userId;
-    const state = req.params.state;
-
-    const [items] = await pool.execute(
-        "SELECT * FROM items WHERE userId = ? AND state = ? AND itemQuantity > 0",
-        [userId, state]
-    );
-
-    res.json(items);
+    res.json(filtered);
 });
 
 // GET all recent purchases by userId
@@ -77,7 +90,12 @@ router.get('/recent-purchases/:userId', authenticateToken, async (req, res) => {
         [userId]
     );
 
-    res.json(items);
+    const withDerivedState = items.map(item => ({
+        ...item,
+        state: deriveState(item),
+    }));
+
+    res.json(withDerivedState);
 });
 
 // GET count of all item states by userId
@@ -85,7 +103,7 @@ router.get('/item-state-count/:userId', authenticateToken, async (req, res) => {
     const userId = req.params.userId;
 
     const [items] = await pool.execute(
-        "SELECT state, COUNT(*) as count FROM items WHERE userId = ? AND itemQuantity > 0 GROUP BY state",
+        "SELECT * FROM items WHERE userId = ? AND itemQuantity > 0",
         [userId]
     );
 
@@ -94,9 +112,10 @@ router.get('/item-state-count/:userId', authenticateToken, async (req, res) => {
         nearing_expiration: 0,
     };
 
-    items.forEach(({ state, count }) => {
-        if (state != "expired") {
-            defaultStates[state] = count;
+    items.forEach((item) => {
+        const derived = deriveState(item);
+        if (derived !== "expired" && defaultStates.hasOwnProperty(derived)) {
+            defaultStates[derived] += 1;
         }
     });
 
@@ -284,19 +303,25 @@ router.post("/submit-food-item", authenticateToken, upload.none(), async (req, r
         const itemName = data.itemName?.trim();
         const itemQuantity = parseFloat(data.quantity) || 1;
         const units = data.units || null;
-        const categoryId = data.category ? parseInt(data.category, 10) : null;
+        const categoryId = data.categoryId
+            ? parseInt(data.categoryId, 10)
+            : data.category
+            ? parseInt(data.category, 10)
+            : null;
         const barcode = data.barcode || null;
         const state = "fresh";
 
         // purchaseDate can be empty; handle both
-        let purchaseDate = null;
-        if (data.purchaseDate) {
-            const dateObj = new Date(data.purchaseDate);
-            purchaseDate = dateObj.toISOString().slice(0, 19).replace("T", " ");
-        }
+        // Preserve provided dates as YYYY-MM-DD strings to avoid timezone shifting to the prior day
+        const purchaseDate = data.purchaseDate || null;
 
-        // For now we don't set an expiry date when manually adding
-        const expiryDate = null;
+        let expiryDate = null;
+        if (data.expiryDate) {
+            const expDateObj = new Date(data.expiryDate);
+            if (!isNaN(expDateObj.getTime())) {
+                expiryDate = data.expiryDate;
+            }
+        }
 
         if (!itemName) {
             return res.status(400).json({ error: "itemName is required" });

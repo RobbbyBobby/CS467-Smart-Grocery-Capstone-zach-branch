@@ -8,7 +8,6 @@ type Recipe = {
   title: string;
   image: string;
   usedIngredients: string[];
-  missedIngredients: string[];
   source: string;
   sourceUrl: string;
 };
@@ -165,7 +164,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ initialIngredients = [] }) =>
 
       {/* Pantry items section */}
       <section style={{ marginBottom: "1.5rem" }}>
-        <h2>Your Pantry Items (from DB)</h2>
+        <h2>Your Pantry Items:</h2>
 
         {pantryLoading && <p>Loading pantry items…</p>}
 
@@ -254,15 +253,6 @@ const RecipesPage: React.FC<RecipesPageProps> = ({ initialIngredients = [] }) =>
                 <strong>Used ingredients:</strong>
                 <ul>
                   {recipe.usedIngredients.map((ing) => (
-                    <li key={ing}>{ing}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <strong>Missing ingredients:</strong>
-                <ul>
-                  {recipe.missedIngredients.map((ing) => (
                     <li key={ing}>{ing}</li>
                   ))}
                 </ul>

@@ -107,7 +107,7 @@ export default function PantryDashboard() {
             </div>
 
             <section className="stat-grid">
-                <div className="card stat-card accent shadow-card">
+                <div className="card stat-card shadow-card">
                     <span className="stat-label">All items</span>
                     <span className="stat-value">{totalItems}</span>
                     <span className="stat-chip">Pantry health synced</span>
@@ -139,7 +139,10 @@ export default function PantryDashboard() {
                                     <p className="row-subtitle">{item.itemQuantity} {item.units}</p>
                                 </div>
                                 <div className="chip warning">
-                                    {daysUntilExpiry(item.expiryDate)} days left
+                                    {(() => {
+                                        const daysLeft = daysUntilExpiry(item.expiryDate);
+                                        return daysLeft === null ? "No expiry set" : `${daysLeft} days left`;
+                                    })()}
                                 </div>
                             </li>
                         ))}

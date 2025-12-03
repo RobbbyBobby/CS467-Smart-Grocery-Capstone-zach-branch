@@ -16,6 +16,7 @@ export default function ItemUpload() {
         units: "",
         categoryId: "",
         purchaseDate: "",
+        expiryDate: "",
         barcode: "",
     });
     const BACKEND_URL = config.BACKEND_URL
@@ -105,6 +106,7 @@ export default function ItemUpload() {
             units: "",
             categoryId: "",
             purchaseDate: "",
+            expiryDate: "",
             barcode: "",
         });
         setPreview(null);
@@ -119,6 +121,7 @@ export default function ItemUpload() {
             units: "",
             categoryId: "",
             purchaseDate: "",
+            expiryDate: "",
             barcode: "",
         });
         setPreview(null);
@@ -229,6 +232,15 @@ export default function ItemUpload() {
                                 type="date"
                                 name="purchaseDate" 
                                 value={formValues.purchaseDate} 
+                                onChange={handleChange} 
+                            />
+                        </div>
+                        <div className="form-row">
+                            <label>Expiry Date</label>
+                            <input 
+                                type="date"
+                                name="expiryDate" 
+                                value={formValues.expiryDate} 
                                 onChange={handleChange} 
                             />
                         </div>
