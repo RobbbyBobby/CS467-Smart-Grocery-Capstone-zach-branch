@@ -38,7 +38,7 @@ export default function Header() {
                         <div className="brand-mark">SG</div>
                         <div className="brand-text">
                             <p className="brand-title">Smart Grocery</p>
-                            <p className="brand-subtitle">Stay ahead of expiry</p>
+                            <p className="brand-subtitle">Stay Ahead of Food Waste</p>
                         </div>
                     </div>
 
