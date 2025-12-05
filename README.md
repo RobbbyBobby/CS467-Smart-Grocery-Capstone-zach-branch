@@ -7,6 +7,7 @@ Installation
 4. Create .env file in the backend folder that mirrors .envexample.tx(found in backend folder)
 
 Running the project locally
+Make sure that Docker is running! 
 Run:
    docker-compose up --build
 
